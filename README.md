@@ -1,6 +1,11 @@
 Zeroless
 ========
 
+[![Build Status](https://travis-ci.org/zmqless/go-zeroless.svg?branch=master)](https://travis-ci.org/zmqless/go-zeroless)
+[![Coverage Status](https://coveralls.io/repos/zmqless/go-zeroless/badge.svg?branch=master&service=github)](https://coveralls.io/github/zmqless/go-zeroless?branch=master)
+[![GoDoc](https://godoc.org/github.com/zmqless/go-zeroless?status.svg)](https://godoc.org/github.com/zmqless/go-zeroless)
+[![License](https://img.shields.io/badge/license-LGPLv2+-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1.html)
+
 Yet another [ØMQ] wrapper for Go. However, differing from [zmq4], which
 tries to stay very close to the C++ implementation, this project aims to
 make distributed systems employing [ØMQ] as gopher as possible.
