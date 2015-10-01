@@ -12,7 +12,7 @@ type socket interface {
 }
 
 type sockInitialiser interface {
-	init(socket)
+	init(socket) error
 }
 
 type sock struct {
@@ -41,7 +41,7 @@ func (this sock) Ready() bool {
 	return (this.ctx != nil && this.zmqSock != nil)
 }
 
-func (this *sock) setSock(pattern zmq.Type) {
+func (this *sock) setSock(pattern zmq.Type) error {
 	var err error
 	this.ctx, err = zmq.NewContext()
 	if err != nil {
@@ -53,7 +53,7 @@ func (this *sock) setSock(pattern zmq.Type) {
 		panic(err)
 	}
 
-	this.initialiser.init(this.zmqSock)
+	return this.initialiser.init(this.zmqSock)
 }
 
 func (this sock) readFromZmqSock() []string {
@@ -153,13 +153,22 @@ func (this sock) getReplier() chan []string {
 	return c
 }
 
-func (this *sock) Pub() chan<- []string {
-	this.setSock(zmq.PUB)
-	return this.getSender()
+func (this *sock) Pub() (chan<- []string, error) {
+	err := this.setSock(zmq.PUB)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return this.getSender(), nil
 }
 
-func (this *sock) PubWithTopic(topic string, embedTopic bool) chan<- []string {
-	publisher := this.Pub()
+func (this *sock) PubWithTopic(topic string, embedTopic bool) (chan<- []string, error) {
+	publisher, err := this.Pub()
+
+	if err != nil {
+		return nil, err
+	}
 
 	c := make(chan []string)
 
@@ -185,23 +194,31 @@ func (this *sock) PubWithTopic(topic string, embedTopic bool) chan<- []string {
 		}
 	}()
 
-	return c
+	return c, nil
 }
 
-func (this *sock) Sub() <-chan []string {
-	this.setSock(zmq.SUB)
+func (this *sock) Sub() (<-chan []string, error) {
+	err := this.setSock(zmq.SUB)
 
-	err := this.zmqSock.SetSubscribe("")
+	if err != nil {
+		return nil, err
+	}
+
+	err = this.zmqSock.SetSubscribe("")
 
 	if err != nil {
 		panic(err)
 	}
 
-	return this.getReceiver()
+	return this.getReceiver(), nil
 }
 
-func (this *sock) SubWithTopics(topics []string) <-chan []string {
-	this.setSock(zmq.SUB)
+func (this *sock) SubWithTopics(topics []string) (<-chan []string, error) {
+	err := this.setSock(zmq.SUB)
+
+	if err != nil {
+		return nil, err
+	}
 
 	for _, topic := range topics {
 		if topic == "" {
@@ -211,34 +228,59 @@ func (this *sock) SubWithTopics(topics []string) <-chan []string {
 		err := this.zmqSock.SetSubscribe(topic)
 
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
 
-	return this.getReceiver()
+	return this.getReceiver(), nil
 }
 
-func (this *sock) Push() chan<- []string {
-	this.setSock(zmq.PUSH)
-	return this.getSender()
+func (this *sock) Push() (chan<- []string, error) {
+	err := this.setSock(zmq.PUSH)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return this.getSender(), nil
 }
 
-func (this *sock) Pull() <-chan []string {
-	this.setSock(zmq.PULL)
-	return this.getReceiver()
+func (this *sock) Pull() (<-chan []string, error) {
+	err := this.setSock(zmq.PULL)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return this.getReceiver(), nil
 }
 
-func (this *sock) Req() chan []string {
-	this.setSock(zmq.REQ)
-	return this.getRequester()
+func (this *sock) Req() (chan []string, error) {
+	err := this.setSock(zmq.REQ)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return this.getRequester(), nil
 }
 
-func (this *sock) Rep() chan []string {
-	this.setSock(zmq.REP)
-	return this.getReplier()
+func (this *sock) Rep() (chan []string, error) {
+	err := this.setSock(zmq.REP)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return this.getReplier(), nil
 }
 
-func (this *sock) Pair() chan []string {
-	this.setSock(zmq.PAIR)
-	return this.getSenderReceiver()
+func (this *sock) Pair() (chan []string, error) {
+	err := this.setSock(zmq.PAIR)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return this.getSenderReceiver(), nil
 }

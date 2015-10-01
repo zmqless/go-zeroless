@@ -11,6 +11,6 @@ func NewServer(port int) *Server {
 	return &server
 }
 
-func (this Server) init(s socket) {
-	bindZmqSock(s, this.port)
+func (this Server) init(s socket) error {
+	return bindZmqSock(s, this.port)
 }

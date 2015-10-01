@@ -16,10 +16,18 @@ func NewClient() *Client {
 	return &client
 }
 
-func (this Client) init(s socket) {
+func (this Client) init(s socket) error {
+	var err error
+
 	for _, address := range this.Addresses() {
-		connectZmqSock(s, address.Ip, address.Port)
+		err = connectZmqSock(s, address.Ip, address.Port)
+
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 func (this Client) Addresses() []Address {
