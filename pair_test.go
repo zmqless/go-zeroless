@@ -11,8 +11,8 @@ func checkExchangedData(t *testing.T, received []string, expected []string) {
 }
 
 func TestDoublePingThenPong(t *testing.T) {
-	pairReceiver := NewServer(1054).Pair()
-	pairSender := NewClient().ConnectLocal(1054).Pair()
+	pairReceiver, _ := NewServer(1054).Pair()
+	pairSender, _ := NewClient().ConnectLocal(1054).Pair()
 
 	pings := [][]string{
 		[]string{"ping1"},

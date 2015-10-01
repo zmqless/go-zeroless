@@ -3,8 +3,8 @@ package zeroless
 import "testing"
 
 func TestDistribute(t *testing.T) {
-	pusher := NewServer(1034).Push()
-	puller := NewClient().ConnectLocal(1034).Pull()
+	pusher, _ := NewServer(1034).Push()
+	puller, _ := NewClient().ConnectLocal(1034).Pull()
 
 	msgs := [][]string{
 		[]string{"msg"},
