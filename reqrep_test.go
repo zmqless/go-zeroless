@@ -4,7 +4,9 @@ import "testing"
 
 func TestPingPong(t *testing.T) {
 	replier, _ := NewServer(1044).Rep()
-	requester, _ := NewClient().ConnectLocal(1044).Req()
+	client := NewClient()
+	client.ConnectLocal(1044)
+	requester, _ := client.Req()
 
 	pings := [][]string{
 		[]string{"ping1"},

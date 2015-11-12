@@ -4,7 +4,9 @@ import "testing"
 
 func TestDistribute(t *testing.T) {
 	pusher, _ := NewServer(1034).Push()
-	puller, _ := NewClient().ConnectLocal(1034).Pull()
+	client := NewClient()
+	client.ConnectLocal(1034)
+	puller, _ := client.Pull()
 
 	msgs := [][]string{
 		[]string{"msg"},
