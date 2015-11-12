@@ -34,27 +34,32 @@ func (this Client) Addresses() []Address {
 	return this.addresses
 }
 
-func (this *Client) Connect(ip string, port int) *Client {
-	if this.Ready() {
-		connectZmqSock(this.getZmqSock(), ip, port)
+func (this *Client) Connect(ip string, port int) error {
+	if !this.Ready() {
+		this.addresses = append(this.addresses, Address{ip, port})
+		return nil
 	}
 
-	this.addresses = append(this.addresses, Address{ip, port})
-
-	return this
+	return connectZmqSock(this.getZmqSock(), ip, port)
 }
 
-func (this *Client) ConnectLocal(port int) *Client {
+func (this *Client) ConnectLocal(port int) error {
 	return this.Connect("127.0.0.1", port)
 }
 
-func (this *Client) Disconnect(ip string, port int) *Client {
+func (this *Client) Disconnect(ip string, port int) error {
 	index := -1
+	var err error
 
 	for i, address := range this.addresses {
 		if address.Ip == ip && address.Port == port {
 			index = i
-			disconnectZmqSock(this.getZmqSock(), address.Ip, address.Port)
+			err = disconnectZmqSock(this.getZmqSock(), address.Ip, address.Port)
+
+			if err != nil {
+				return err
+			}
+
 			break
 		}
 	}
@@ -65,9 +70,9 @@ func (this *Client) Disconnect(ip string, port int) *Client {
 		this.addresses = append(begin, end...)
 	}
 
-	return this
+	return nil
 }
 
-func (this *Client) DisconnectLocal(port int) *Client {
+func (this *Client) DisconnectLocal(port int) error {
 	return this.Disconnect("127.0.0.1", port)
 }
