@@ -3,8 +3,10 @@ package zeroless
 import "testing"
 
 func TestPingPong(t *testing.T) {
-	replier := NewServer(1044).Rep()
-	requester := NewClient().ConnectLocal(1044).Req()
+	replier, _ := NewServer(1044).Rep()
+	client := NewClient()
+	client.ConnectLocal(1044)
+	requester, _ := client.Req()
 
 	pings := [][]string{
 		[]string{"ping1"},
