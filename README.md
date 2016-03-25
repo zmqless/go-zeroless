@@ -13,7 +13,7 @@ make distributed systems employing [ØMQ] as gopher as possible.
 Being simpler to use, Zeroless doesn't supports all of the fine aspects
 and features of [ØMQ]. However, you can expect to find all the message
 passing patterns you were accustomed to (i.e. pair, request/reply,
-publisher/subscriber, push/pull). Depite that, the only transport
+publisher/subscriber, push/pull). Despite that, the only transport
 available is TCP.
 
 Installation
